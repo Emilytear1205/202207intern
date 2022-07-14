@@ -40,7 +40,7 @@ c	if(flat.ge.?? .and. flat.le.?? .....) then
 
 ```
 
-### f70 檔案讀取並輸出，定位品質閥值設定
+### f70 檔案讀取並輸出，將定位品質從英文轉成數字
 
 ```
 c	Program test
@@ -60,7 +60,7 @@ c	write會輸出文字，read的功能在於讓使用者輸入檔名，編譯器
 110	read(10,*,END=199)iy,im,id,ih,imin,fs,fla,flon,fdep,fmag,ins,fdmin
      &,igap,ftr,fH,fZ,Afi,Inph,Aqua
 c	open和read，開啟檔案並進行讀取
-	
+
 	if(Aqua.eq.'A') then
 	q1=1
 	else if (Aqua.eq.'B') then
