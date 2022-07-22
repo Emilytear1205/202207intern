@@ -16,11 +16,13 @@
 + -Df，-D可用來控制資料解析度，-Df屬於最高等級的解析度。
 + -A0.1，可省略比0.1平方公里還要小的物體(陸地、小島)。
 + -P的功用在於可將原本預設為橫向的A4紙張，改成直向的。
-
++ psconvert的指令可參考此連結：https://docs.gmt-china.org/6.1/module/psconvert/
 
 ### Taiwab2.ps，利用不同角度和剖面去分析2018年花蓮地震的地震序列
 
 ```
+
+###我不管你現在是想要做甚麼圖出來，拜託請給我好好仔細睜大眼睛看你的JM還有JX有沒有"底" "圖"配合###
 
 ###colorbar
 gmtset COLOR_MODEL +rgb
@@ -66,7 +68,10 @@ gawk "($4>6) {print $12,$3,$3}" tmp2_1 | psxy -R -JX -K -O -Sa0.7 -W0.01 -G255/0
 ###顯示colorbar
 gmt psscale -Cbase1.cpt -D13.9/10/5/0.6h -Bx+t"Depth_km" -O >>Taiwan2.ps
 
-rem del *.tmp tmp*
+###轉換格式
+gmt psconvert -A -Tj -FHualien_2018 Taiwan2.ps
+
+del *.tmp tmp*
 
 ```
 
