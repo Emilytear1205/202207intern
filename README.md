@@ -9,8 +9,6 @@
 gmtset COLOR_MODEL +rgb
 ###地震深度的變化顏色
 gmt makecpt -Cwysiwyg -T-0/60/10 -Z > base1.cpt
-###地形起伏的顏色變化
-makecpt -Ctopo -T-4000/4000/100 -Z > topo1.cpt
 
 ###底圖($1經度；$2緯度；$3深度；$4規模；年分，深度以顏色區分，規模以球體大小區分)
 psbasemap -R120.5/123.5/23/25.5 -JM10c -Ba1f0.5g1 -L124.1/22.4/0/50 -BWSne+t"Earthquake Distribution" -K -Y18 -P> Taiwan2.ps
