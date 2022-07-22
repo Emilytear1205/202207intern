@@ -1,6 +1,74 @@
 # 202207intern
 2022年暑期實務實習
 
+### GMT 作圖
+###我不管現在是想要做甚麼圖出來，要好好仔細睜大眼睛看"JM"還有"JX"有沒有"底" "圖"配合
+```
+
+###colorbar
+gmtset COLOR_MODEL +rgb
+###地震深度的變化顏色
+gmt makecpt -Cwysiwyg -T-0/60/10 -Z > base1.cpt
+###地形起伏的顏色變化
+makecpt -Ctopo -T-4000/4000/100 -Z > topo1.cpt
+
+###底圖($1經度；$2緯度；$3深度；$4規模；年分，深度以顏色區分，規模以球體大小區分)
+psbasemap -R120.5/123.5/23/25.5 -JM10c -Ba1f0.5g1 -L124.1/22.4/0/50 -BWSne+t"Earthquake Distribution" -K -Y18 -P> Taiwan2.ps
+###海岸線(畫出台灣本島)
+pscoast -R -JM -W0.1p,black -Gdarkseagreen2 -Scornflowerblue -Df -Na -O -K -P >> Taiwan2.ps
+
+
+### 剖面圖的起點與終點，離剖線的最短距離是$13
+echo 121 24.9 > 1.tmp
+echo 122.5 23.3 >> 1.tmp
+psxy -R -JM -O -K -W2 1.tmp >> Taiwan2.ps
+project -C121/24.9 -E122.5/23.3 -Qpqrs .\data\0_100_year.txt >tmp2_1
+
+###地震點圖($1經度；$2緯度；$3深度；$4規模；年分，深度以顏色區分，規模以球體大小區分)
+###算出距離並且進行擇選
+gawk "($13<=10)&&($13>=-10) {print $1,$2,$3,$4}" tmp2_1 | psxy -R -JM  -K -O -SC0.2 -Cbase1.cpt -W0.1 -P -V >> Taiwan2.ps
+rem gawk "($4>6) {print $1,$2}" .\data\0_100_year.txt| psxy -R -JM -K -O -Sa0.7 -W0.01 -G255/0/0 >> Taiwan2.ps
+###畫出斷層線
+psxy .\data\2021fault97.txt -JM -R -K -O -W2,255/0/0 -P >> Taiwan2.ps
+
+###2018花蓮地震震央位置
+echo 121.73 24.10 | gmt psxy -R -J -Sa0.7 -W0.01 -G255/0/0 -O -K >> Taiwan2.ps
+
+###經度剖面(bottom)
+psbasemap -R120.5/123.5/-10/100 -Jx3.45/-0.03 -Bxa1f1+u"@+O@+" -Bya100f20 -BWSne -X-0.2 -Y-5.4 -O -K >> Taiwan2.ps
+gawk "($13<=10)&&($13>=-10) {print $1,$3,$3}" tmp2_1 | psxy -R -Jx -K -O -SC0.2 -Cbase1.cpt -W0.1 -P -V >> Taiwan2.ps
+echo 121.73 6.3 | psxy -R -Jx -Sa0.7 -W0.01 -G255/0/0 -O -K >> Taiwan2.ps
+###緯度剖面(right)
+psbasemap -R-10/100/23/25.5 -Jx0.038/3.8 -Bxa100f20 -Bya1f1+u"@+O@+" -BESwn -X10.6 -Y5.2 -O -K>> Taiwan2.ps
+gawk "($13<=10)&&($13>=-10) {print $3,$2,$3}" tmp2_1 | psxy -R -Jx -K -O -SC0.2 -Cbase1.cpt -W0.1 -P -V >> Taiwan2.ps
+echo 6.3 24.10 | psxy -R -Jx -Sa0.7 -W0.01 -G255/0/0 -O -K >> Taiwan2.ps
+
+###製作剖面圖
+psbasemap -R0/200/0/80 -JX10.5/-5.7 -Bxa40f20 -Bya40f20 -BWSne -Y-13c -X-10.5 -O -K >> Taiwan2.ps
+gawk "($13<=10)&&($13>=-10) {print $12,$3,$3}" tmp2_1 | psxy -R -JX -K -O -SC0.2 -Cbase1.cpt -W0.1 >> Taiwan2.ps
+gawk "($4>6) {print $12,$3,$3}" tmp2_1 | psxy -R -JX -K -O -Sa0.7 -W0.01 -G255/0/0 >> Taiwan2.ps
+
+###顯示colorbar
+gmt psscale -Cbase1.cpt -D13.9/10/5/0.6h -Bx+t"Depth_km" -O >>Taiwan2.ps
+
+rem del *.tmp tmp*
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### f70 檔案讀取並輸出(尚未設定揀選標準)
 + 如果一列程式碼過長，cmd會無法讀取，需要加入&(前面要空5格) 
 + 編碼從10開始，用4或5程式會壞掉
