@@ -75,49 +75,6 @@ del *.tmp tmp*
 
 ```
 
-### f70 檔案讀取並輸出(尚未設定揀選標準)
-+ 如果一列程式碼過長，cmd會無法讀取，需要加入&(前面要空5格) 
-+ 編碼從10開始，用4或5程式會壞掉
-+ 如後第一列記得要空
-+  REWIND現在仍然很常用。假如程序需要兩遍讀入同一個文本格式數據文件，讀完第一遍後，用REWIND回到文件頭部。          
-+  BACKSPACE用於回退一個記錄。後面通常加上文件號，這裡的記錄可以理解為一個回車符號。
-
-```
-
-
-c	Program test
-	implicit none
-      character*100 Ain,Aout,Afi,Aqua
-	real:: fs,fla,flon,fdep,fmag,fdmin,ftr,fH,fZ
-	integer:: iy,im,id,ih,imin,ins,igap,Inph
-
-	write(*,*)"input filename?"
-	read(*,'(A100)') Ain
-c	write會輸出文字，read的功能在於讓使用者輸入檔名，編譯器會進行讀取
-	write(*,*)"output filename?"
-	read(*,'(A100)') Aout
-
-	open (10,file=Ain)
-	open (11,file=Aout)
-110	read(10,*,END=199)iy,im,id,ih,imin,fs,fla,flon,fdep,fmag,ins,fdmin
-     &,igap,ftr,fH,fZ,Afi,Inph,Aqua
-c	open和read，開啟檔案並進行讀取
-	
-c	if(flat.ge.?? .and. flat.le.?? .....) then
-
-	write(11,132)iy,im,id,ih,imin,fs,fla,flon,fdep,fmag,ins,fdmin,igap
-     &,ftr,fH,fZ,Afi,Inph,Aqua
-132	format(i4,4(1x,i2),f5.2,1x,f7.4,1x,f8.4,1x,f6.2,1x,f4.2,1x,i3,1x,
-     &f5.1,1x,i3,1x,f5.2,1x,f6.2,1x,f6.2,1x,A1,1x,I3,1x,A1)
-
-	go to 110
-199	close(10)
-	close(11)
-	stop
-	end
-
-
-```
 ### 顏色是照著震源深度
 
 ```
@@ -215,6 +172,50 @@ del *.tmp tmp*
 ```
 
 
+
+### f70 檔案讀取並輸出(尚未設定揀選標準)
++ 如果一列程式碼過長，cmd會無法讀取，需要加入&(前面要空5格) 
++ 編碼從10開始，用4或5程式會壞掉
++ 如後第一列記得要空
++  REWIND現在仍然很常用。假如程序需要兩遍讀入同一個文本格式數據文件，讀完第一遍後，用REWIND回到文件頭部。          
++  BACKSPACE用於回退一個記錄。後面通常加上文件號，這裡的記錄可以理解為一個回車符號。
+
+```
+
+
+c	Program test
+	implicit none
+      character*100 Ain,Aout,Afi,Aqua
+	real:: fs,fla,flon,fdep,fmag,fdmin,ftr,fH,fZ
+	integer:: iy,im,id,ih,imin,ins,igap,Inph
+
+	write(*,*)"input filename?"
+	read(*,'(A100)') Ain
+c	write會輸出文字，read的功能在於讓使用者輸入檔名，編譯器會進行讀取
+	write(*,*)"output filename?"
+	read(*,'(A100)') Aout
+
+	open (10,file=Ain)
+	open (11,file=Aout)
+110	read(10,*,END=199)iy,im,id,ih,imin,fs,fla,flon,fdep,fmag,ins,fdmin
+     &,igap,ftr,fH,fZ,Afi,Inph,Aqua
+c	open和read，開啟檔案並進行讀取
+	
+c	if(flat.ge.?? .and. flat.le.?? .....) then
+
+	write(11,132)iy,im,id,ih,imin,fs,fla,flon,fdep,fmag,ins,fdmin,igap
+     &,ftr,fH,fZ,Afi,Inph,Aqua
+132	format(i4,4(1x,i2),f5.2,1x,f7.4,1x,f8.4,1x,f6.2,1x,f4.2,1x,i3,1x,
+     &f5.1,1x,i3,1x,f5.2,1x,f6.2,1x,f6.2,1x,A1,1x,I3,1x,A1)
+
+	go to 110
+199	close(10)
+	close(11)
+	stop
+	end
+
+
+```
 
 
 ### f70 檔案讀取並輸出，將定位品質從英文轉成數字
