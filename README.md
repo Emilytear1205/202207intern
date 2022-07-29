@@ -1,6 +1,19 @@
 # 202207intern
 2022年暑期實務實習
 
+ <p align="right">
+    指導者：中央氣象局蒲新杰研究員
+    </p>
+
+ <p align="right">
+    作者：許芯慈
+    </p>
+
+ <p align="right">
+    最後更新時間：2022/07/28
+    </p>
+  
+
 ### GMT 5 作圖
 + 不管現在是想要做甚麼圖出來，要好好仔細睜大眼睛看"JM"還有"JX"有沒有"底" "圖"配合
 + "wysiwyg" 是"GMT color table"中的一組color bar顏色系列。
