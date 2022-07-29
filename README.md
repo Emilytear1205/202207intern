@@ -33,7 +33,7 @@
 
 
 ### Taiwan2.ps 利用不同角度和剖面去分析2013年3月和6月的南投地震之地震序列
-
+# 顏色隨深度變化
 ```
 
 ###我不管現在是想要做甚麼圖出來，一定要好好仔細睜大眼睛看JM還有JX有沒有"底" "圖"配合###
@@ -131,6 +131,122 @@ del *.cpt*
 
 ```
 
+### Taiwan3.ps 利用不同角度和剖面去分析2013年3月和6月的南投地震之地震序列
+### 2013_compare.ps 是將剖面和震源機制解單獨繪製出來討論
+# 顏色隨月份變化
+```
+
+###我不管你現在是想要做甚麼圖出來，拜託請給我好好仔細睜大眼睛看你的JM還有JX有沒有"底" "圖"配合###
+
+###colorbar
+rem gmtset COLOR_MODEL +rgb
+gmtset COLOR_MODEL 
+###地震深度的變化顏色
+makecpt -Csealand -T1/12/1> base1.cpt
+
+###底圖($1經度；$2緯度；$3深度；$4規模；年分，深度以顏色區分，規模以球體大小區分)
+psbasemap -R119.5/122.5/22.5/25 -JM10c -Ba1f0.5g1 -L123.1/21.9/0/50 -BWSne+t"Earthquake Distribution" -K -Y18 -P> Taiwan3.ps
+###海岸線(畫出台灣本島)
+pscoast -R -JM -W0.1p,black -Gdarkseagreen2 -Scornflowerblue -Dh -Na -O -K -P >> Taiwan3.ps
+
+
+###剖面圖的起點與終點，離剖線的最短距離是$13
+rem 3月
+echo 120.8 24.1 > 1.tmp
+echo 121.4 23.7 >> 1.tmp
+psxy -R -JM -O -K -W2 1.tmp >> Taiwan3.ps
+rem 6月
+echo 120.7 24 >2.tmp
+echo 121.3 23.6 >> 2.tmp
+psxy -R -JM -O -K -W2 2.tmp >> Taiwan3.ps
+project -C120.8/24.1 -E121.4/23.7 -Qpqrs .\data\2013_100km.txt >tmp2_1
+
+###測站
+gawk "{print $2,$3}" .\data\nsta24.dat | psxy -JM -R -K -O -St0.15 -W0.5 >> Taiwan3.ps
+
+###地震點圖($1經度；$2緯度；$3深度；$4規模；年分，深度以顏色區分，規模以球體大小區分)
+###算出距離並且進行擇選
+gawk "($4<=4)&&($12<100)&&($11<=50)&&($11>=-50) {print $1,$2,$3,$4/15}" tmp2_1 | psxy -R -JM  -K -O -SC -Cbase1.cpt -W0.1 -P -V >> Taiwan3.ps
+gawk "($4>4)&&($12<100)&&($11<=50)&&($11>=-50) {print $1,$2,$3,$4/15}" tmp2_1 | psxy -R -JM  -K -O -SC -Cbase1.cpt -W0.1 -P -V >> Taiwan3.ps
+
+###地震震央
+echo 121.05 23.9 | gmt psxy -R -J -Sa0.7 -W0.01 -Gred -O -K >> Taiwan3.ps
+echo 120.97 23.86 | gmt psxy -R -J -Sa0.7 -W0.01 -Gyellow -O -K >> Taiwan3.ps
+
+###3月機制球
+echo 121.05 23.9 19.4 317 19 31 6.2 122 24 2013/03/27 > beach_ball.tmp
+psmeca -R -JM -Sa0.5c/u -C -Gred -K -O beach_ball.tmp >> Taiwan3.ps
+###6月機制球
+echo 120.97 23.86 14.5 2 22 83 6.5 122 23 2013/06/02 > beach_ball2.tmp
+psmeca -R -JM -Sa0.5c/u -C -Gyellow -K -O beach_ball2.tmp >> Taiwan3.ps
+
+###畫出斷層線
+psxy .\data\2021fault97.txt -JM -R -K -O -W2,255/0/0 -P >> Taiwan3.ps
+
+###經度剖面(bottom)
+psbasemap -R119.5/122.5/-10/100 -Jx3.45/-0.03 -Bxa1f1+u"@+O@+" -Bya100f20 -BWSne -X-0.2 -Y-5.4 -O -K >> Taiwan3.ps
+gawk "($4<=4)&&($13<=10)&&($13>=-10) {print $1,$3,$3,$4/15}" tmp2_1 | psxy -R -Jx -K -O -SC -Cbase1.cpt -W0.1 -P -V >> Taiwan3.ps
+gawk "($4>4)&&($13<=10)&&($13>=-10) {print $1,$3,$3,$4/15}" tmp2_1 | psxy -R -Jx -K -O -SC -Cbase1.cpt -W0.1 -P -V >> Taiwan3.ps
+echo 121.05 19.4 | psxy -R -Jx -Sa0.7 -W0.01 -G255/0/0 -O -K >> Taiwan3.ps
+###緯度剖面(right)
+psbasemap -R-10/100/22.5/25 -Jx0.038/3.8 -Bxa100f20 -Bya1f1+u"@+O@+" -BESwn -X10.6 -Y5.2 -O -K>> Taiwan3.ps
+gawk "($4<=4)&&($13<=10)&&($13>=-10) {print $3,$2,$3,$4/15}" tmp2_1 | psxy -R -Jx -K -O -SC -Cbase1.cpt -W0.1 -P -V >> Taiwan3.ps
+gawk "($4>44)&&($13<=10)&&($13>=-10) {print $3,$2,$3,$4/15}" tmp2_1 | psxy -R -Jx -K -O -SC -Cbase1.cpt -W0.1 -P -V >> Taiwan3.ps
+echo 19.4 23.9 | psxy -R -Jx -Sa0.7 -W0.01 -G255/0/0 -O -K >> Taiwan3.ps
+
+###製作剖面圖
+psbasemap -R0/160/0/60 -JX10.5/-4 -Bxa40f20 -Bya40f20 -BWSne -Y-13c -X-10.6 -O -K >> Taiwan3.ps
+gawk "($12<100)&&($13<=10)&&($13>=-10) {print $12,$3,$3,$4/15}" tmp2_1 | psxy -R -JX -K -O -SC -Cbase1.cpt -W0.1 >> Taiwan3.ps
+gawk "($4>6)&&($6<6) {print $12,$3,$3}" tmp2_1 | psxy -R -JX -K -O -Sa1.0 -W0.01 -G255/0/0 >> Taiwan3.ps
+gawk "($4>6)&&($6>=6) {print $12,$3,$3}" tmp2_1 | psxy -R -JX -K -O -Sa1.0 -W0.01 -Gyellow >> Taiwan3.ps
+###機制球
+pscoupe -JX -R -Sa0.5/u -Gred  -Aa120.8/24.1/121.4/23.7/90/20/0/40 -K -O -Q -L -N beach_ball.tmp >> Taiwan3.ps
+pscoupe -JX -R -Sa0.5/u -Gyellow -Aa120.7/24/121.3/23.6/90/20/0/40 -K -O -Q -L -N beach_ball2.tmp >> Taiwan3.ps
+
+
+###顯示colorbar
+gmt psscale -Cbase1.cpt -D14.4/9.7/7/0.6h -B+l"2013_Month" -K -O >>Taiwan3.ps
+
+###顯示規模大小的圖例
+echo 1.0 2 2 > tmp.m
+echo 1.5 2 3 >> tmp.m
+echo 2.0 2 4 >> tmp.m
+echo 2.5 2 5 >> tmp.m
+echo 3.0 2 6 >> tmp.m
+echo 3.5 2 7 >> tmp.m
+rem #下面這行是畫出不同比例圓球的
+gawk "{print $1,$2,$3/15}" tmp.m | gmt psxy -R0/8/0/10 -JX -Sc -W0.1 -K -O -X11 -Y-0.1>> Taiwan3.ps
+pstext tmp.m -R -JX -F+f8p -D0/0.8 -K -O -X0 -Y0.2 -N >> Taiwan3.ps
+echo 0 0 Magnitude(M@-L@-): | gmt pstext -R -JX -F+f10p,1+jML -N -O -X0.6 -Y1.3 >> Taiwan3.ps
+
+
+###單獨畫出來
+##3月份
+psbasemap -R0/80/0/60 -JX12/-9 -Bxa10f5 -Bya20f10+l"Before May" -BWSne -K -P -X4 -Y20 > 2013_compare.ps
+gawk "($6<=5)&&($4<=4)&&($12<50)&&($13<=10)&&($13>=-10) {print $12,$3,$6,$4/15}" tmp2_1 | psxy -R -JX -K -O -SC -Cbase1.cpt -W0.1 >>2013_compare.ps
+gawk "($6<=5)&&($4>4)&&($12<50)&&($13<=10)&&($13>=-10) {print $12,$3,$6,$4/15}" tmp2_1 | psxy -R -JX -K -O -SC -Cbase1.cpt -W0.1 >>2013_compare.ps
+gawk "($4>6)&&($6<6) {print $12,$3,$3}" tmp2_1 | psxy -R -JX -K -O -Sa1.0 -W0.01 -Gred >> 2013_compare.ps
+pscoupe -JX -R -Sa0.5/u -Gred -Aa120.8/24.1/121.4/23.7/90/20/0/40 -K -O -Q -L -N beach_ball.tmp >> 2013_compare.ps
+rem pscoupe -JX -R -Sa0.5/u -Gyellow -Aa120.7/24/121.3/23.6/90/20/0/40 -K -Q -L -N beach_ball2.tmp>> 2013_compare.ps
+##6月份
+psbasemap -R0/80/0/60 -JX12/-9 -Bxa10f5 -Bya20f10+l"After June" -BWSne -K -O -X0 -Y-12 >> 2013_compare.ps
+gawk "($6>5)&&($4<=4)&&($12<50)&&($13<=10)&&($13>=-10) {print $12,$3,$6,$4/15}" tmp2_1 | psxy -R -JX -K -O -SC -Cbase1.cpt -W0.1 >>2013_compare.ps
+gawk "($6>5)&&($4>4)&&($12<50)&&($13<=10)&&($13>=-10) {print $12,$3,$6,$4/15}" tmp2_1 | psxy -R -JX -K -O -SC -Cbase1.cpt -W0.1 >>2013_compare.ps
+gawk "($4>6)&&($6>=6) {print $12,$3,$3}" tmp2_1 | psxy -R -JX -K -O -Sa1.0 -W0.01 -Gyellow >> 2013_compare.ps
+pscoupe -JX -R -Sa0.5/u -Gyellow -Aa120.7/24/121.3/23.6/90/20/0/40 -K -O -Q -L -N beach_ball2.tmp >> 2013_compare.ps
+
+###顯示colorbar
+gmt psscale -Cbase1.cpt -D14/11/7/0.6 -By+l"2013_Month" -K -O >> 2013_compare.ps
+
+###轉換格式(轉成jpg)
+rem gmt psconvert -A -Tj -FNantou_Month_compare Taiwan3.ps
+
+del *.tmp tmp*
+del *.cpt*
+
+# -D14.3/10/6/0.6 呈現出來的是直的，-D14.3/10/6/0.6h是水平的
+
+```
 
 ### Taiwab2.ps，利用不同角度和剖面去分析2018年花蓮地震的地震序列
 
